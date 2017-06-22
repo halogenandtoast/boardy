@@ -8,6 +8,8 @@ import Data.Maybe (fromMaybe)
 import Data.Monoid ((<>))
 import System.Environment (lookupEnv)
 import Control.Exception (handle)
+import Data.List (sortOn)
+import Data.Ord (Down(..))
 
 -- HTTP
 import Network.HTTP.Simple
@@ -40,7 +42,12 @@ bggBoardgameUrl :: Text -> Text
 bggBoardgameUrl = ("https://www.boardgamegeek.com/boardgame/" <>)
 
 bggApiItemIds :: Document -> [Text]
-bggApiItemIds xml = fromDocument xml $/ element "item" >=> attribute "id"
+bggApiItemIds xml =
+    let items = fromDocument xml $/ element "item"
+        ids = items >>= attribute "id"
+        titles = items >>= (child >=> element "name" >=> attributeIs "type" "primary" >=> attribute "value")
+        years = items >>= (child >=> element "yearpublished" >=> attribute "value")
+    in map (^. _3) $ sortOn (T.length . (^. _1)) $ sortOn (Down . (^. _2)) (zip3 titles years ids)
 
 bggSearchRequest :: Text -> Text -> IO (Maybe Text)
 bggSearchRequest boardyId msg =
