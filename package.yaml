@@ -1,0 +1,34 @@
+# This YAML file describes your package. Stack will automatically generate a
+# Cabal file when you run `stack build`. See the hpack website for help with
+# this file: <https://github.com/sol/hpack>.
+benchmarks:
+category: Other
+description: A slack bot for looking up boardgamegeek games
+executables:
+  boardy:
+    dependencies:
+    - base
+    - slack-api
+    - lens
+    - text
+    - http-types
+    - xml-conduit
+    - http-conduit
+    ghc-options:
+    - -rtsopts
+    - -threaded
+    - -with-rtsopts=-N
+    main: Main.hs
+    source-dirs: app
+extra-source-files:
+- LICENSE.md
+- package.yaml
+- README.md
+- stack.yaml
+ghc-options: -Wall
+github: halogenandtoast/boardy
+license: MIT
+maintainer: halogenandtoast
+name: boardy
+synopsis: A slack bot for looking up boardgamegeek games
+version: '0.0.0'
